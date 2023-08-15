@@ -13,6 +13,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public int getNavigationOpSelected() {
+
         return navigationOpSelected;
     }
 
