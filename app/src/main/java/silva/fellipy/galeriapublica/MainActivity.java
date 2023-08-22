@@ -1,12 +1,14 @@
 package silva.fellipy.galeriapublica;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,9 +20,12 @@ import com.google.android.material.navigation.NavigationBarView;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.Manifest;
+
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationItemView bottomNavigationItemView;
+    static int RESULT_REQUEST_PERMISSION = 2
 
     void setFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -73,17 +78,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (permissionsNotGranted.size() > 0) { // Verifica se existem permissões não concedidas na lista
+        if (permissionsNotGranted.size() > 0) { // Verifica se existem permissões não concedidas na lista
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(permissionsNotGranted.toArray(new String[permissionsNotGranted.size()]), RESULT_REQUEST_PERMISSION); // Solicita as permissões não concedidas ao sistema, passando a lista de permissões como um array de strings e um código de solicitação
+            }
+
+            else {
+                MainViewModel vm = new ViewModelProvider(this).get(MainViewModel.class);
+                int navigationOpSelected = vm.getNavigationOpSelected();
+                bottomNavigationItemView.setSectedItemId(navigationOpSelected);
             }
         }
 
-        else {
-            MainViewModel vm = new ViewModelProvider(this).get(MainViewModel.class);
-            int navigationOpSelected = vm.getNavigationOpSelected();
-            bottomNavigationItemView.setSectedItemId(navigationOpSelected);
-        }
+
+
     }
 
     // Verifica se a permissão especificada foi concedida
@@ -97,26 +105,33 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions,
+                grantResults);
 
-        // Cria uma lista para armazenar as permissões não concedidas
-        final List<String> permissionsNotGranted = new ArrayList<>();
+        final List<String> permissionsRejected = new ArrayList<>();
+        if(requestCode == RESULT_REQUEST_PERMISSION) {
 
-        for (int i = 0; i < grantResults.length; i++) { // Itera sobre os resultados das permissões concedidas ou não concedidas
-            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) { // Verifica se a permissão atual não foi concedida
-                permissionsNotGranted.add(permissions[i]);
-                // Adiciona a permissão não concedida à lista de permissões não concedidas
+            for(String permission : permissions) {
+                if(!hasPermission(permission)) {
+                    permissionsRejected.add(permission);
+                    }
+                }
             }
-        }
 
-        if (permissionsNotGranted.size() > 0) { // Verifica se existem permissões não concedidas na lista
-            requestPermissions(permissionsNotGranted.toArray(new String[permissionsNotGranted.size()]), RESULT_REQUEST_PERMISSION); // Solicita as permissões não concedidas ao sistema, passando a lista de permissões como um array de strings e um código de solicitação
+        if(permissionsRejected.size() > 0) {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-        }
-        else{
-            MainViewModel vm = new ViewModelProvider(this).get(MainViewModel.class);
-            int navigationOpSelected = vm.getNavigationOpSelected();
-            bottomNavigationItemView.setSelectedItemId(navigationOpSelected);
-        }
+                if(shouldShowRequestPermissionRationale(permissionsRejected.get(0)))
+                {
+                    new AlertDialog.Builder(MainActivity.this).setMessage("Para usar essa app é preciso conceder essas permissões").setPositiveButton("OK", new
+                        DialogInterface.OnClickListener() {
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        requestPermissions(permissionsRejected.toArray(new String[permissionsRejected.size()]), RESULT_REQUEST_PERMISSION);
+    }
+    }).create().show();
+                    }
+                }
+            }
     }
 }
