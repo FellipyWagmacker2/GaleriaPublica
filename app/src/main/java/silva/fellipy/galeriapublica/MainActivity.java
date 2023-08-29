@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
@@ -24,8 +25,8 @@ import android.Manifest;
 
 public class MainActivity extends AppCompatActivity {
 
-    BottomNavigationItemView bottomNavigationItemView;
-    static int RESULT_REQUEST_PERMISSION = 2
+    BottomNavigationView bottomNavigationItemView;
+    static int RESULT_REQUEST_PERMISSION = 2;
 
     void setFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             else {
                 MainViewModel vm = new ViewModelProvider(this).get(MainViewModel.class);
                 int navigationOpSelected = vm.getNavigationOpSelected();
-                bottomNavigationItemView.setSectedItemId(navigationOpSelected);
+                bottomNavigationItemView.setSelectedItemId(navigationOpSelected);
             }
         }
 

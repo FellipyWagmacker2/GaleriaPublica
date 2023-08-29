@@ -38,10 +38,6 @@ public class GridAdapter extends PagingDataAdapter<ImageData, MyViewHolder> {
         ImageData imageData = getItem(position);
 
 
-        // Configurar o tamanho da imagem
-        TextView tvSize = holder.itemView.findViewById(R.id.tvSize);
-        tvSize.setText("Tamanho: " + String.valueOf(imageData.size));
-
         // Configurar a miniatura da imagem
         Bitmap thumb = imageData.thumb;
         ImageView imageView = holder.itemView.findViewById(R.id.imThumb);

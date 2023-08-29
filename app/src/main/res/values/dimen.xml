@@ -2,4 +2,6 @@
 <resources>
     <dimen name="im_width">100dp</dimen>
     <dimen name="im_height">100dp</dimen>
+    <dimen name="itemWidth">100dp</dimen>
+    <dimen name="itemHeight">100dp</dimen>
 </resources>
