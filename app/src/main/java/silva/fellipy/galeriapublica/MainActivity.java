@@ -83,12 +83,11 @@ public class MainActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(permissionsNotGranted.toArray(new String[permissionsNotGranted.size()]), RESULT_REQUEST_PERMISSION); // Solicita as permissões não concedidas ao sistema, passando a lista de permissões como um array de strings e um código de solicitação
             }
-
-            else {
-                MainViewModel vm = new ViewModelProvider(this).get(MainViewModel.class);
-                int navigationOpSelected = vm.getNavigationOpSelected();
-                bottomNavigationItemView.setSelectedItemId(navigationOpSelected);
-            }
+        }
+        else {
+            MainViewModel vm = new ViewModelProvider(this).get(MainViewModel.class);
+            int navigationOpSelected = vm.getNavigationOpSelected();
+            bottomNavigationItemView.setSelectedItemId(navigationOpSelected);
         }
 
 
